@@ -53,7 +53,38 @@ public class GameRepository
         using var cmd = new MySqlCommand(
             @"INSERT INTO games (title, platform, genre, game_condition, price, quantity, release_year)
               VALUES (@title, @platform, @genre, @condition, @price, @quantity, @year)", conn);
+        FillParameters(cmd, g);
+        cmd.ExecuteNonQuery();
+    }
 
+    public void Update(Game g)
+    {
+        using var conn = new MySqlConnection(_connectionString);
+        conn.Open();
+
+        using var cmd = new MySqlCommand(
+            @"UPDATE games
+              SET title=@title, platform=@platform, genre=@genre,
+                  game_condition=@condition, price=@price,
+                  quantity=@quantity, release_year=@year
+              WHERE id=@id", conn);
+        FillParameters(cmd, g);
+        cmd.Parameters.AddWithValue("@id", g.Id);
+        cmd.ExecuteNonQuery();
+    }
+
+    public void Delete(int id)
+    {
+        using var conn = new MySqlConnection(_connectionString);
+        conn.Open();
+
+        using var cmd = new MySqlCommand("DELETE FROM games WHERE id=@id", conn);
+        cmd.Parameters.AddWithValue("@id", id);
+        cmd.ExecuteNonQuery();
+    }
+
+    private static void FillParameters(MySqlCommand cmd, Game g)
+    {
         cmd.Parameters.AddWithValue("@title", g.Title);
         cmd.Parameters.AddWithValue("@platform", g.Platform);
         cmd.Parameters.AddWithValue("@genre", g.Genre);
@@ -61,7 +92,5 @@ public class GameRepository
         cmd.Parameters.AddWithValue("@price", g.Price);
         cmd.Parameters.AddWithValue("@quantity", g.Quantity);
         cmd.Parameters.AddWithValue("@year", (object?)g.ReleaseYear ?? DBNull.Value);
-
-        cmd.ExecuteNonQuery();
     }
 }

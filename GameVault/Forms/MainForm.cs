@@ -7,6 +7,7 @@ namespace GameVault;
 public partial class MainForm : Form
 {
     private readonly GameRepository _repo = new(Database.ConnectionString);
+    private int _selectedId = 0;
 
     public MainForm()
     {
@@ -37,22 +38,41 @@ public partial class MainForm : Form
         LoadGames();
     }
 
-    private void btnAdd_Click(object sender, EventArgs e)
+    // Clicar numa linha da tabela preenche os campos
+    private void dgvGames_CellClick(object sender, DataGridViewCellEventArgs e)
+    {
+        if (e.RowIndex < 0) return;
+
+        if (dgvGames.Rows[e.RowIndex].DataBoundItem is Game g)
+        {
+            _selectedId = g.Id;
+            txtTitle.Text = g.Title;
+            cmbPlatform.Text = g.Platform;
+            txtGenre.Text = g.Genre;
+            cmbCondition.Text = g.Condition;
+            numPrice.Value = g.Price;
+            numQuantity.Value = g.Quantity;
+            numYear.Value = g.ReleaseYear ?? 2024;
+        }
+    }
+
+    private Game? ReadGameFromFields()
     {
         if (string.IsNullOrWhiteSpace(txtTitle.Text))
         {
             MessageBox.Show("Title is required.");
-            return;
+            return null;
         }
 
         if (numPrice.Value <= 0)
         {
             MessageBox.Show("Price must be greater than zero.");
-            return;
+            return null;
         }
 
-        var game = new Game
+        return new Game
         {
+            Id = _selectedId,
             Title = txtTitle.Text.Trim(),
             Platform = cmbPlatform.Text,
             Genre = txtGenre.Text.Trim(),
@@ -61,6 +81,12 @@ public partial class MainForm : Form
             Quantity = (int)numQuantity.Value,
             ReleaseYear = (int)numYear.Value
         };
+    }
+
+    private void btnAdd_Click(object sender, EventArgs e)
+    {
+        var game = ReadGameFromFields();
+        if (game == null) return;
 
         try
         {
@@ -78,6 +104,61 @@ public partial class MainForm : Form
         }
     }
 
+    private void btnUpdate_Click(object sender, EventArgs e)
+    {
+        if (_selectedId == 0)
+        {
+            MessageBox.Show("Select a game from the table first.");
+            return;
+        }
+
+        var game = ReadGameFromFields();
+        if (game == null) return;
+
+        try
+        {
+            _repo.Update(game);
+            LoadGames();
+            ClearFields();
+        }
+        catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
+        {
+            MessageBox.Show("Another game with that title, platform and condition already exists.");
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Could not update the game: " + ex.Message);
+        }
+    }
+
+    private void btnDelete_Click(object sender, EventArgs e)
+    {
+        if (_selectedId == 0)
+        {
+            MessageBox.Show("Select a game from the table first.");
+            return;
+        }
+
+        var answer = MessageBox.Show(
+            "Are you sure you want to delete this game?",
+            "Confirm delete",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Warning);
+
+        if (answer != DialogResult.Yes) return;
+
+        try
+        {
+            _repo.Delete(_selectedId);
+            LoadGames();
+            ClearFields();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Could not delete the game: " + ex.Message);
+        }
+    }
+
     private void btnClear_Click(object sender, EventArgs e)
     {
         ClearFields();
@@ -85,6 +166,7 @@ public partial class MainForm : Form
 
     private void ClearFields()
     {
+        _selectedId = 0;
         txtTitle.Clear();
         txtGenre.Clear();
         cmbPlatform.SelectedIndex = 0;
@@ -93,15 +175,5 @@ public partial class MainForm : Form
         numQuantity.Value = 0;
         numYear.Value = 2024;
         txtTitle.Focus();
-    }
-
-    private void btnAdd_Click_1(object sender, EventArgs e)
-    {
-
-    }
-
-    private void txtSearch_TextChanged_1(object sender, EventArgs e)
-    {
-
     }
 }
