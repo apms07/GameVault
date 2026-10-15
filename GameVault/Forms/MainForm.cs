@@ -4,8 +4,7 @@ namespace GameVault;
 
 public partial class MainForm : Form
 {
-    private readonly GameRepository _repo =
-        new("Server=localhost;Database=gamevault_db;User=root;Password=#Ikariamm2007;");
+    private readonly GameRepository _repo = new(Database.ConnectionString);
 
     public MainForm()
     {
