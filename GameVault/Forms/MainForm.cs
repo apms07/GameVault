@@ -6,6 +6,8 @@ namespace GameVault;
 
 public partial class MainForm : Form
 {
+    private const int LowStockLimit = 3;
+
     private readonly GameRepository _repo = new(Database.ConnectionString);
     private int _selectedId = 0;
 
@@ -25,11 +27,42 @@ public partial class MainForm : Form
     {
         try
         {
-            dgvGames.DataSource = _repo.Search(txtSearch.Text);
+            var games = _repo.Search(txtSearch.Text);
+            dgvGames.DataSource = games;
+
+            decimal total = games.Sum(g => g.Price * g.Quantity);
+            int lowStock = games.Count(g => g.Quantity < LowStockLimit);
+            lblTotal.Text = $"Total inventory value: {total:C2}   |   Low stock titles: {lowStock}";
         }
         catch (Exception ex)
         {
             MessageBox.Show("Could not load games: " + ex.Message);
+        }
+    }
+
+    // Runs every time the grid finishes loading data: formats columns and colors rows
+    private void dgvGames_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+    {
+        if (dgvGames.Columns["Id"] != null)
+            dgvGames.Columns["Id"].Visible = false;
+
+        if (dgvGames.Columns["Price"] != null)
+            dgvGames.Columns["Price"].DefaultCellStyle.Format = "C2";
+
+        dgvGames.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+        foreach (DataGridViewRow row in dgvGames.Rows)
+        {
+            if (row.DataBoundItem is Game g && g.Quantity < LowStockLimit)
+            {
+                row.DefaultCellStyle.BackColor = Color.MistyRose;
+                row.DefaultCellStyle.ForeColor = Color.DarkRed;
+            }
+            else
+            {
+                row.DefaultCellStyle.BackColor = Color.White;
+                row.DefaultCellStyle.ForeColor = Color.Black;
+            }
         }
     }
 
@@ -38,7 +71,7 @@ public partial class MainForm : Form
         LoadGames();
     }
 
-    // Clicar numa linha da tabela preenche os campos
+    // Clicking a row fills the fields
     private void dgvGames_CellClick(object sender, DataGridViewCellEventArgs e)
     {
         if (e.RowIndex < 0) return;
@@ -175,5 +208,20 @@ public partial class MainForm : Form
         numQuantity.Value = 0;
         numYear.Value = 2024;
         txtTitle.Focus();
+    }
+
+    private void label1_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label2_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label8_Click(object sender, EventArgs e)
+    {
+
     }
 }
