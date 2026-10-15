@@ -191,6 +191,31 @@ public partial class MainForm : Form
             MessageBox.Show("Could not delete the game: " + ex.Message);
         }
     }
+    private void btnSell_Click(object sender, EventArgs e)
+    {
+        if (_selectedId == 0)
+        {
+            MessageBox.Show("Select a game from the table first.");
+            return;
+        }
+
+        try
+        {
+            if (_repo.SellOne(_selectedId))
+            {
+                LoadGames();
+                numQuantity.Value = Math.Max(0, numQuantity.Value - 1);
+            }
+            else
+            {
+                MessageBox.Show("This game is out of stock.");
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Could not sell the game: " + ex.Message);
+        }
+    }
 
     private void btnClear_Click(object sender, EventArgs e)
     {

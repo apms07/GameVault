@@ -82,6 +82,18 @@ public class GameRepository
         cmd.Parameters.AddWithValue("@id", id);
         cmd.ExecuteNonQuery();
     }
+    public bool SellOne(int id)
+    {
+        using var conn = new MySqlConnection(_connectionString);
+        conn.Open();
+
+        using var cmd = new MySqlCommand(
+            "UPDATE games SET quantity = quantity - 1 WHERE id=@id AND quantity > 0", conn);
+        cmd.Parameters.AddWithValue("@id", id);
+
+        // Returns false if there was no stock left to sell
+        return cmd.ExecuteNonQuery() > 0;
+    }
 
     private static void FillParameters(MySqlCommand cmd, Game g)
     {

@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             dgvGames = new DataGridView();
             txtTitle = new TextBox();
             cmbPlatform = new ComboBox();
@@ -51,6 +51,7 @@
             label6 = new Label();
             label7 = new Label();
             label8 = new Label();
+            btnSell = new Button();
             ((System.ComponentModel.ISupportInitialize)dgvGames).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numPrice).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numQuantity).BeginInit();
@@ -64,14 +65,14 @@
             dgvGames.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvGames.BackgroundColor = Color.White;
             dgvGames.BorderStyle = BorderStyle.None;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = Color.SteelBlue;
-            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            dataGridViewCellStyle1.ForeColor = Color.White;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            dgvGames.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = Color.SteelBlue;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            dataGridViewCellStyle2.ForeColor = Color.White;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dgvGames.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             dgvGames.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvGames.EnableHeadersVisualStyles = false;
             dgvGames.Location = new Point(20, 190);
@@ -161,7 +162,7 @@
             btnAdd.TabIndex = 8;
             btnAdd.Text = "Add";
             btnAdd.UseVisualStyleBackColor = true;
-            btnAdd.Click += this.btnAdd_Click;
+            btnAdd.Click += btnAdd_Click;
             // 
             // btnClear
             // 
@@ -279,11 +280,22 @@
             label8.Text = "Release year:";
             label8.Click += label8_Click;
             // 
+            // btnSell
+            // 
+            btnSell.Location = new Point(760, 540);
+            btnSell.Name = "btnSell";
+            btnSell.Size = new Size(100, 27);
+            btnSell.TabIndex = 22;
+            btnSell.Text = "Sell";
+            btnSell.UseVisualStyleBackColor = true;
+            btnSell.Click += btnSell_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(884, 613);
+            Controls.Add(btnSell);
             Controls.Add(label8);
             Controls.Add(label7);
             Controls.Add(label6);
@@ -343,5 +355,6 @@
         private Label label6;
         private Label label7;
         private Label label8;
+        private Button btnSell;
     }
 }
