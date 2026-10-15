@@ -44,4 +44,24 @@ public class GameRepository
         }
         return games;
     }
+
+    public void Add(Game g)
+    {
+        using var conn = new MySqlConnection(_connectionString);
+        conn.Open();
+
+        using var cmd = new MySqlCommand(
+            @"INSERT INTO games (title, platform, genre, game_condition, price, quantity, release_year)
+              VALUES (@title, @platform, @genre, @condition, @price, @quantity, @year)", conn);
+
+        cmd.Parameters.AddWithValue("@title", g.Title);
+        cmd.Parameters.AddWithValue("@platform", g.Platform);
+        cmd.Parameters.AddWithValue("@genre", g.Genre);
+        cmd.Parameters.AddWithValue("@condition", g.Condition);
+        cmd.Parameters.AddWithValue("@price", g.Price);
+        cmd.Parameters.AddWithValue("@quantity", g.Quantity);
+        cmd.Parameters.AddWithValue("@year", (object?)g.ReleaseYear ?? DBNull.Value);
+
+        cmd.ExecuteNonQuery();
+    }
 }
