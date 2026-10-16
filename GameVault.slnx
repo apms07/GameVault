@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="GameVault.Web/GameVault.Web.csproj" />
   <Project Path="GameVault/GameVault.csproj" />
 </Solution>

@@ -1,0 +1,30 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "GameVault Store";
+}
+
+<h1>GameVault Store</h1>
+
+<form method="get">
+    <input type="search" name="q" value="@Model.Query" placeholder="Search games" />
+    <button type="submit">Search</button>
+</form>
+
+<table>
+    <thead>
+        <tr><th>Title</th><th>Platform</th><th>Condition</th><th>Stock</th><th>Price</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var g in Model.Games)
+        {
+            <tr>
+                <td>@g.Title</td>
+                <td>@g.Platform</td>
+                <td>@g.Condition</td>
+                <td>@g.Quantity</td>
+                <td>@g.Price.ToString("C2")</td>
+            </tr>
+        }
+    </tbody>
+</table>
